@@ -1,3 +1,7 @@
+-- cd C:\Program Files\LOVE
+-- love.exe "ruta main.lua"
+
+
 function inarray(elem,array)
    for inarr = 1,#array do
       if ( elem[1]== array[inarr][1] and elem[2] == array[inarr][2]) then
