@@ -1,6 +1,7 @@
 -- cd C:\Program Files\LOVE
 -- love.exe "ruta main.lua"
 
+local highscores = {}
 
 function inarray(elem,array)
    for inarr = 1,#array do
@@ -116,6 +117,7 @@ end
 
 function love.draw()
    if(start) then
+      timer_start = love.timer.getTime()
       love.graphics.setBackgroundColor(0.7,1,1,1)
       for i = 1,wide do
          for j = 1,height do 
@@ -123,7 +125,15 @@ function love.draw()
          end
       end
       if(win) then
+         timer_end = love.timer.getTime()
          love.graphics.draw(won,50,32*height+49)
+         seconds = (timer_end - timer_start)
+         minutes = (timer_end - timer_start) / 60
+         print("Time: %02d:%02d", minutes, seconds)
+
+         file = io.open("highscores.txt", "w")
+         file:write("%02d:%02d", minutes, seconds)
+         file:close()
       end
    else
       love.graphics.draw(title,0,20)
