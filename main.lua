@@ -1,20 +1,8 @@
 -- cd C:\Program Files\LOVE
 -- love.exe "ruta main.lua"
-
 require('love.timer')
+require('file_logic')
 local path = "C:\\Users\\joaqu\\Documents\\GitHub\\Minesweeper-Lua-G1\\highscores.txt"
-local highscores = {}
-
-function writeFile(minutes, seconds)
-   if cont_2 == 1 then
-      file = io.open(path, "w")
-      local score = string.format("%02d:%02d", minutes, seconds)
-      print(score)
-      file:write(score)
-      file:close()
-      cont_2 = cont_2 + 1
-   end
-end
 
 function inarray(elem,array)
    for inarr = 1,#array do
@@ -123,6 +111,7 @@ function love.load()
 
    start = false
    continue = true
+   new = false
    cont = 1
    cont_1 = 1
    cont_2 = 1
@@ -132,37 +121,48 @@ function love.load()
 end
 
 function love.draw()
-   if(start) then
-      if cont == 1 then
-         timer_start = os.time()
-         cont = cont + 1
-      end
-      --timer_end = os.time()
-      love.graphics.setBackgroundColor(0.7,1,1,1)
-      for i = 1,wide do
-         for j = 1,height do 
-            love.graphics.draw(element[maze[i][j]], 18+32*i, 18+32*j)
+   if new == false then
+      if(start) then
+         if cont == 1 then
+            timer_start = os.time()
+            cont = cont + 1
          end
-      end
-      if(win) then
-         --timer_end = love.timer.getTime()
-         love.graphics.draw(won,50,32*height+49)
-         timer_final = os.difftime(timer_end, timer_start)
-         seconds = math.floor(((timer_final) % 60) + .5)
-         minutes = math.floor(((timer_final) / 60) + .5)
-         print("Time: " .. os.difftime(timer_end, timer_start))
-         --print("%02d:%02d", minutes, seconds)
-
-         writeFile(minutes, seconds)
-      end
+         --timer_end = os.time()
+         love.graphics.setBackgroundColor(0.7,1,1,1)
+   
+         for i = 1,wide do
+            for j = 1,height do 
+               love.graphics.draw(element[maze[i][j]], 18+32*i, 18+32*j)
+            end
+         end
+         if(win) then
+            --timer_end = love.timer.getTime()
+            love.graphics.draw(won,50,32*height+49)
+            timer_final = os.difftime(timer_end, timer_start)
+            seconds = math.floor(((timer_final) % 60))
+            minutes = math.floor(((timer_final) / 60))
+            --print("Time: " .. os.difftime(timer_end, timer_start))
+            --print("%02d:%02d", minutes, seconds)
+   
+            --writeFile(minutes, seconds)
+            if cont_2 == 1 then
+               fileToArray(minutes, seconds)
+               cont_2 = cont_2 + 1
+               --start = false
+               new = true
+            end
+         end
+      else
+         love.graphics.draw(title,0,20)
+         love.graphics.draw(simple,76,150)
+         --love.graphics.draw(medium,76,200)
+         --love.graphics.draw(expert,76,250)
+         --love.graphics.draw(custom,76,300)
+      end    
    else
-      love.graphics.draw(title,0,20)
-      love.graphics.draw(simple,76,150)
-      love.graphics.draw(medium,76,200)
-      love.graphics.draw(expert,76,250)
-      --love.graphics.draw(custom,76,300)
-   end 
-
+      --love.window.setMode(512,512)
+      love.graphics.setBackgroundColor(0.7,1,1,1)
+   end
 end
 
 function love.update(dt)
@@ -221,7 +221,7 @@ function love.mousepressed (x, y, button, istouch)
          validclick = true
          wide = 9
          height = 9
-         number = 10
+         number = 1
       end
       if(buttonclick(x,y,button,medium)) then
          validclick = true
