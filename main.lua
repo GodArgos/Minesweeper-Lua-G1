@@ -2,7 +2,7 @@
 -- love.exe "ruta main.lua"
 require('love.timer')
 require('file_logic')
-local path = "C:\\Users\\joaqu\\Documents\\GitHub\\Minesweeper-Lua-G1\\highscores.txt"
+local path = "C:\\Users\\Angel\\Documents\\GitHub\\Minesweeper-Lua-G1\\highscores.txt"
 
 function inarray(elem,array)
    for inarr = 1,#array do

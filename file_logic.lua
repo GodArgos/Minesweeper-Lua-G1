@@ -1,4 +1,4 @@
-local path = "C:\\Users\\joaqu\\Documents\\GitHub\\Minesweeper-Lua-G1\\highscores.txt"
+local path = "C:\\Users\\Angel\\Documents\\GitHub\\Minesweeper-Lua-G1\\highscores.txt"
 
 highscores = {}
 aux = 0
