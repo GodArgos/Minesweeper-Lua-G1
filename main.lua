@@ -1,8 +1,14 @@
 -- cd C:\Program Files\LOVE
 -- love.exe "ruta main.lua"
-require('love.timer')
-require('file_logic')
-local path = "C:\\Users\\joaqu\\Documents\\GitHub\\Minesweeper-Lua-G1\\highscores.txt"
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------CAMBIAR PATH EN FILE_LOGIC PARA QUE FUNCIONE--------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+require('file_logic')            -- Archivo de lógica enfocada al highscore
+suit = require('suit-master')    -- Librearía para elementos del GUI, solo se uso el botón y el input field
+
+local input = {text = ""}
 
 function inarray(elem,array)
    for inarr = 1,#array do
@@ -85,9 +91,26 @@ function check(x,y,boom,w,h)
    end
 end
 
-function love.load()
-   font = love.graphics.newFont( 30, 'normal')
+function love.textinput(t)
+   if #input.text < 3 then -- Se asegura que el nombre del jugador ingresado no pase de 3 caractéres
+      suit.textinput(t)
+   end
+   
+end
 
+function love.keypressed(key)
+   suit.keypressed(key)
+end
+
+function love.load() -- Setea constantes y variables al principio de la ejecución del programa
+
+   -- Fuentes a usar
+   font = love.graphics.newFont(30, 'normal')
+   timer_font = love.graphics.newFont(25, 'normal')
+   top_font = love.graphics.newFont(20, 'normal')
+   high_font = love.graphics.newFont(35, 'normal')
+
+   -- Imágenes a usar
    initial = love.graphics.newImage("image/initial.png")
    blank = love.graphics.newImage("image/grid.png")
    flags = love.graphics.newImage("image/flag.png")
@@ -104,71 +127,115 @@ function love.load()
    won = love.graphics.newImage("image/win.png")
    title = love.graphics.newImage("image/title.png")
 
+
+   -- Niveles
    simple = love.graphics.newText(font, "Simple (9*9,10 mines)")
    medium = love.graphics.newText(font,"Medium (16*16,40 mines)")
    expert = love.graphics.newText(font,"Expert (30*16,99 mines)")
-   --custom = love.graphics.newText(font,"Custom")
 
+
+   -- Variables
    start = false
    continue = true
    new = false
+   top = false
    cont = 1
    cont_1 = 1
    cont_2 = 1
+   name = ""
 
-   love.window.setMode(512,512)
+   love.window.setMode(512,512) -- Tamaño de la ventana
    element ={blank,b1,b2,b3,b4,b5,b6,b7,b8,flags,bombdisc,bombboom,initial}
 end
 
-function love.draw()
+function love.draw() -- Dibuja por cada frame todo lo que se encuentre en la funcion
    if new == false then
       if(start) then
-         if cont == 1 then
+         love.graphics.setColor(255, 255, 255, 255)
+         
+         if cont == 1 then           -- Toma el tiempo de inicio (tiempo del sistema) una sola vez
             timer_start = os.time()
+            show_time_start = os.time()
             cont = cont + 1
          end
-         --timer_end = os.time()
+         
          love.graphics.setBackgroundColor(0.7,1,1,1)
    
-         for i = 1,wide do
+         for i = 1,wide do           -- Dibuja la matriz de celdas
             for j = 1,height do 
                love.graphics.draw(element[maze[i][j]], 18+32*i, 18+32*j)
             end
          end
+
+         -- Muestra el tiempo actual en pantalla
+         show_time_final = os.difftime(show_time_end, show_time_start)
+         show_seconds = math.floor(((show_time_final) % 60))
+         show_minutes = math.floor(((show_time_final) / 60))
+
+         timertext = string.format("%02d:%02d", show_minutes, show_seconds)
+
+         love.graphics.setColor(0, 0, 0)
+         love.graphics.setFont(timer_font)
+         love.graphics.print(timertext, 150, 15)
+         
          if(win) then
-            --timer_end = love.timer.getTime()
-            love.graphics.draw(won,50,32*height+49)
-            timer_final = os.difftime(timer_end, timer_start)
-            seconds = math.floor(((timer_final) % 60))
-            minutes = math.floor(((timer_final) / 60))
-            --print("Time: " .. os.difftime(timer_end, timer_start))
-            --print("%02d:%02d", minutes, seconds)
-   
-            --writeFile(minutes, seconds)
-            if cont_2 == 1 then
-               fileToArray(minutes, seconds)
-               cont_2 = cont_2 + 1
-               --start = false
+            love.graphics.draw(won,50,32*height+49)  
+
+            if cont_2 == 1 then      -- Calcula el tiempo que el jugador se demoró en ganar
+               timer_final = os.difftime(timer_end, timer_start)
+               seconds = math.floor(((timer_final) % 60))
+               minutes = math.floor(((timer_final) / 60))
                new = true
             end
          end
       else
+         -- Dibuja el menú Principal
          love.graphics.draw(title,0,20)
          love.graphics.draw(simple,76,150)
-         --love.graphics.draw(medium,76,200)
-         --love.graphics.draw(expert,76,250)
-         --love.graphics.draw(custom,76,300)
-      end    
+      end
    else
-      --love.window.setMode(512,512)
-      love.graphics.setBackgroundColor(0.7,1,1,1)
+      if(top == false) then -- Dibuja la pantalla para ingresar el nombre del jugador
+         love.graphics.setFont(top_font)
+         love.graphics.print("INGRESE SU NOMBRE", 90,120)
+         love.graphics.setBackgroundColor(0.7,1,1,1)
+         suit.draw()
+      else
+         love.graphics.setFont(high_font)  -- Dibuja la pantalla del TOP 3 de jugadores
+         love.graphics.print("- TOP 3 -", 125,80)
+         love.graphics.setBackgroundColor(0.7,1,1,1)
+         suit.draw()
+         
+         if cont_2 == 1 then
+            HIGHSCORES(name, timer_final) -- Calcula el top 3
+            printTop()                    -- Muestra el top 3
+         end
+      end
+      
+      
    end
 end
 
-function love.update(dt)
-   if win and cont_1 == 1 then
+function love.update(dt) -- Funcion que se llama cada frame
+   if (new == false and continue == true) then -- Actualiza el tiempo actual, solo si no se ha ganado y el juego sigue funcionando 
+      show_time_end = os.time()
+   end
+
+   if win and cont_1 == 1 then -- Guarda el tiempo final una vez que el jugador gana
       timer_end = os.time()
       cont_1 = cont_1 + 1
+   end
+
+   if(new) and top == false then -- Muestra el input field si la nueva pantalla se ve
+      love.graphics.setFont(top_font)
+      suit.Input(input, 100,160,200,30)
+      
+      state = suit.Button("OK", 255, 200, 45,30)
+      
+      if state.hit then -- Si el botón se ha presionado
+         top = true
+         name = input.text
+      end
+
    end
 end
 
@@ -222,18 +289,6 @@ function love.mousepressed (x, y, button, istouch)
          wide = 9
          height = 9
          number = 1
-      end
-      if(buttonclick(x,y,button,medium)) then
-         validclick = true
-         wide = 16
-         height =16
-         number =40
-      end
-      if(buttonclick(x,y,button,expert)) then
-         validclick = true
-         wide = 30 
-         height = 16
-         number = 99
       end
       if(validclick) then
          love.window.updateMode(32*wide+100,32*height+100)
