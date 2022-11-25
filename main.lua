@@ -306,7 +306,7 @@ function StartGame()
             validclick = true
             wide = 9
             height = 9
-            number = 10
+            number = 25
          end
          if(validclick) then
             love.window.updateMode(32*wide+100,32*height+100)
@@ -320,14 +320,106 @@ function StartGame()
                end
             end
             bombxy ={}
-            bombxy[1] = {love.math.random( 1, wide ),love.math.random( 1, height )}
+            --[[bombxy[1] = {love.math.random( 1, wide ),love.math.random( 1, height )}
             for k = 2,number do
                temp = {love.math.random( 1, wide ),love.math.random( 1, height )}
                while (inarray(temp,bombxy)) do
                   temp = {love.math.random( 1, wide ),love.math.random( 1, height )}
                end
                bombxy[k] = temp
-            end
+            end]]--
+
+            -- 5 mines
+            --[[bombxy[1] = {1,1}
+            bombxy[2] = {1,2}
+            bombxy[3] = {1,3}
+            bombxy[4] = {1,4}
+            bombxy[5] = {1,5}]]--
+
+            --10 mines
+            --[[bombxy[1] = {1,1}
+            bombxy[2] = {1,2}
+            bombxy[3] = {1,3}
+            bombxy[4] = {1,4}
+            bombxy[5] = {1,5}
+            bombxy[6] = {1,6}
+            bombxy[7] = {1,7}
+            bombxy[8] = {1,8}
+            bombxy[9] = {1,9}
+
+            bombxy[10] = {2,1}]]--
+
+            --15 mines
+            --[[bombxy[1] = {1,1}
+            bombxy[2] = {1,2}
+            bombxy[3] = {1,3}
+            bombxy[4] = {1,4}
+            bombxy[5] = {1,5}
+            bombxy[6] = {1,6}
+            bombxy[7] = {1,7}
+            bombxy[8] = {1,8}
+            bombxy[9] = {1,9}
+
+            bombxy[10] = {2,1}
+            bombxy[11] = {2,2}
+            bombxy[12] = {2,3}
+            bombxy[13] = {2,4}
+            bombxy[14] = {2,5}
+            bombxy[15] = {2,6}]]--
+
+            --20 mines
+            --[[bombxy[1] = {1,1}
+            bombxy[2] = {1,2}
+            bombxy[3] = {1,3}
+            bombxy[4] = {1,4}
+            bombxy[5] = {1,5}
+            bombxy[6] = {1,6}
+            bombxy[7] = {1,7}
+            bombxy[8] = {1,8}
+            bombxy[9] = {1,9}
+
+            bombxy[10] = {2,1}
+            bombxy[11] = {2,2}
+            bombxy[12] = {2,3}
+            bombxy[13] = {2,4}
+            bombxy[14] = {2,5}
+            bombxy[15] = {2,6}
+            bombxy[16] = {2,7}
+            bombxy[17] = {2,8}
+            bombxy[18] = {2,9}
+            
+            bombxy[19] = {3,1}
+            bombxy[20] = {3,2}]]--
+
+            --25 mines
+            bombxy[1] = {1,1}
+            bombxy[2] = {1,2}
+            bombxy[3] = {1,3}
+            bombxy[4] = {1,4}
+            bombxy[5] = {1,5}
+            bombxy[6] = {1,6}
+            bombxy[7] = {1,7}
+            bombxy[8] = {1,8}
+            bombxy[9] = {1,9}
+
+            bombxy[10] = {2,1}
+            bombxy[11] = {2,2}
+            bombxy[12] = {2,3}
+            bombxy[13] = {2,4}
+            bombxy[14] = {2,5}
+            bombxy[15] = {2,6}
+            bombxy[16] = {2,7}
+            bombxy[17] = {2,8}
+            bombxy[18] = {2,9}
+            
+            bombxy[19] = {3,1}
+            bombxy[20] = {3,2}
+            bombxy[21] = {3,3}
+            bombxy[22] = {3,4}
+            bombxy[23] = {3,5}
+            bombxy[24] = {3,6}
+            bombxy[25] = {3,7}
+
             start = true
          end
       end
